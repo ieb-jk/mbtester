@@ -6,7 +6,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                echo 'Checkout source'
+                echo 'Checkout source and do regualar stuff'
             }
         }
 

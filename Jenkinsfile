@@ -11,9 +11,12 @@ pipeline {
         }
 
 
-        stage('Devit') {
+        stage('PR-Routine') {
+            when {
+                branch 'PR-..*'
+            }
             steps {
-                echo 'Dev it'
+                echo 'Something specific to PRs'
             }
         }
 

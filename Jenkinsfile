@@ -6,10 +6,18 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                echo 'Checkout PR'
+                echo 'Checkout source'
             }
         }
 
+        stage('Master') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo 'Standard Master Routine'
+            }
+        }
 
         stage('PR-Routine') {
             when {

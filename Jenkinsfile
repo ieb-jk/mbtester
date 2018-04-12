@@ -8,6 +8,7 @@ pipeline {
             steps {
                 echo 'Checkout source and do regualar stuff'
                 echo "We are working with ${env.BRANCH_NAME}"
+                setBuildStatus ("${context}", 'Code checked out', 'SUCCESS')
             }
         }
 
@@ -31,4 +32,15 @@ pipeline {
 
 
     }
+}
+
+
+void setBuildStatus(context, message, state) {
+  step([
+      $class: "GitHubCommitStatusSetter",
+      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/ieb-jk/mbtester"],
+      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ]);
 }

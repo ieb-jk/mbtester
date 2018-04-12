@@ -22,13 +22,14 @@ pipeline {
         stage('ParallelTesting') {
             steps {
                 parallel (
-                    "StaticAnalysis" : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' },
+                    "StaticAnalysis" : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' 
+                            setBuildStatus ('ci/jenkins/parallel/StaticAnalysis', 'Passed!', 'SUCCESS')
+                        },
                     "Integration" : { echo 'BrowserStack with end to end testing' },
                     "LoadTesting" : { echo 'JMeter, Bench, Seige' },
                     "Security" : { echo 'RIPs security scanning' }
                 )
             }
-            setBuildStatus ('ci/jenkins/parallel-testing', 'Passed!', 'SUCCESS')
         }
 
         stage('PromoteToDark') {

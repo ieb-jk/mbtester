@@ -24,11 +24,11 @@ pipeline {
                     "StaticAnalysis" : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' 
                         passed('StaticAnalysis') },
                     "Integration" : { echo 'BrowserStack with end to end testing'
-                        failed('Integration') },
+                        passed('Integration') },
                     "LoadTesting" : { echo 'JMeter, Bench, Seige'
                         passed('LoadTesting') },
                     "Security" : { echo 'RIPs security scanning' 
-                        passed('SecurityScan') }
+                        failed('SecurityScan') }
                 )
             }
         }

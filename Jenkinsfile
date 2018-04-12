@@ -6,6 +6,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
+                context="continuous-integration/jenkins/checkingout"
                 echo 'Checkout source and do regualar stuff'
                 echo "We are working with ${env.BRANCH_NAME}"
                 setBuildStatus ("${context}", 'Code checked out', 'SUCCESS')

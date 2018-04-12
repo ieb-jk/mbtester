@@ -24,7 +24,7 @@ pipeline {
                     "StaticAnalysis" : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' 
                         passed('StaticAnalysis') },
                     "Integration" : { echo 'BrowserStack with end to end testing'
-                        passed('Integration') },
+                        failed('Integration') },
                     "LoadTesting" : { echo 'JMeter, Bench, Seige'
                         passed('LoadTesting') },
                     "Security" : { echo 'RIPs security scanning' 
@@ -45,6 +45,7 @@ pipeline {
 
 
 void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
+void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') }
 
 
 void setBuildStatus(context, message, state) {

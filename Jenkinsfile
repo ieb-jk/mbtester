@@ -8,7 +8,7 @@ pipeline {
             steps {
                 echo 'Checkout source and do regualar stuff'
                 echo "We are working with ${env.BRANCH_NAME}"
-                setBuildStatus ('continuous-integration/jenkins/checkingout', 'Code checked out', 'SUCCESS')
+                setBuildStatus ('ci/jenkins/unit-tests', 'Code checked out', 'SUCCESS')
             }
         }
 

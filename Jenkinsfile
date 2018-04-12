@@ -27,8 +27,8 @@ pipeline {
                     "LoadTesting" : { echo 'JMeter, Bench, Seige' },
                     "Security" : { echo 'RIPs security scanning' }
                 )
-                setBuildStatus ('ci/jenkins/parallel-testing', 'Passed!', 'SUCCESS')
             }
+            setBuildStatus ('ci/jenkins/parallel-testing', 'Passed!', 'SUCCESS')
         }
 
         stage('PromoteToDark') {

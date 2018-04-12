@@ -12,26 +12,33 @@ pipeline {
             }
         }
 
-        stage('Master') {
-            when {
-                branch 'master'
-            }
+        stage('UnitTesting') {
             steps {
-                echo 'Standard Master Routine'
+                echo 'PhpUnit - contained code testing upto mock / stubbed php scripts. test Migration scripts and scan for errors'
+                setBuildStatus ('ci/jenkins/unit-testing', 'Passed!', 'SUCCESS')
             }
         }
 
-        stage('PR-Routine') {
-            when {
-                branch 'PR-.*'
-            }
+        stage('ParallelTesting') {
             steps {
-                echo 'Something specific to PRs'
+                parallel (
+                    "StaticAnalysis" : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' },
+                    "Integration" : { echo 'BrowserStack with end to end testing' },
+                    "LoadTesting" : { echo 'JMeter, Bench, Seige' },
+                    "Security" : { echo 'RIPs security scanning' }
+                )
+                setBuildStatus ('ci/jenkins/parallel-testing', 'Passed!', 'SUCCESS')
             }
         }
 
-
+        stage('PromoteToDark') {
+            steps {
+                echo 'Initially deployed to staged environment for final approval, before switching live/dark urls'
+                setBuildStatus ('ci/jenkins/deployment', 'Passed!', 'SUCCESS')
+            }
+        }
     }
+
 }
 
 

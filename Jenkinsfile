@@ -21,7 +21,7 @@ pipeline {
 
         stage('PR-Routine') {
             when {
-                branch 'PR-..*'
+                branch 'PR-.*'
             }
             steps {
                 echo 'Something specific to PRs'

@@ -45,7 +45,8 @@ pipeline {
 
 
 void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
-void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') }
+void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
+throw err}
 
 
 void setBuildStatus(context, message, state) {

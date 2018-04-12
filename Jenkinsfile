@@ -7,6 +7,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Checkout source and do regualar stuff'
+                echo "We are working with ${env.BRANCH_NAME}"
             }
         }
 

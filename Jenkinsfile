@@ -28,7 +28,7 @@ pipeline {
                     "LoadTesting" : { echo 'JMeter, Bench, Seige'
                         passed('LoadTesting') },
                     "Security" : { echo 'RIPs security scanning' 
-                        failed('SecurityScan') }
+                        passed('SecurityScan') }
                 )
             }
         }

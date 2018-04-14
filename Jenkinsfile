@@ -46,6 +46,7 @@ pipeline {
 
 void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
 void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
+    slackNotification("bad","${context} Failed","@JohnKemp")
 throw err}
 
 
@@ -57,4 +58,15 @@ void setBuildStatus(context, message, state) {
       errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
       statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
   ]);
+}
+
+
+
+node {
+    slackNotification("bad","First test message", "@JohnKemp"
+    )
+}
+
+def slackNotification(color, message, channel) {
+     slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: color, message: message
 }

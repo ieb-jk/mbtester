@@ -43,9 +43,9 @@ pipeline {
         stage('ReleaseToDark') {
             when {
                 branch "PR-..*"
-                passed('Deployment')
             }
             steps {
+                passed('Deployment')
                 echo "Deploy to 'dark' environment"
             }
         }

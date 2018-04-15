@@ -40,10 +40,13 @@ pipeline {
             }
         }
 
-        stage('PromoteToDark') {
-            steps {
-                echo 'Initially deployed to staged environment for final approval, before switching live/dark urls'
+        stage('ReleaseToDark') {
+            when {
+                branch "PR-..*"
                 passed('Deployment')
+            }
+            steps {
+                echo "Deploy to 'dark' environment"
             }
         }
     }

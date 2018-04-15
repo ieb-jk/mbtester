@@ -57,7 +57,7 @@ pipeline {
 void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
 
 void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
-    slackNotification("bad","${context} Failed","@JohnKemp")
+    slackNotification("bad","${context}","@JohnKemp")
 throw err}
 
 

@@ -11,9 +11,16 @@ pipeline {
             }
         }
 
+        stage('Merging') {
+            steps {
+                echo 'Develope branch merges Phinx migration scripts ran and Grunt applied'
+                passed('CodeMerges')
+            }
+        }
+
         stage('UnitTesting') {
             steps {
-                echo 'PhpUnit - contained code testing upto mock / stubbed php scripts. test Migration scripts and scan for errors'
+                echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
                 passed('UnitTesting')
             }
         }
@@ -45,6 +52,7 @@ pipeline {
 
 
 void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
+
 void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
     slackNotification("bad","${context} Failed","@JohnKemp")
 throw err}
@@ -61,12 +69,6 @@ void setBuildStatus(context, message, state) {
 }
 
 
-
-node {
-    slackNotification("bad","First test message", "@JohnKemp"
-    )
-}
-
-def slackNotification(color, message, channel) {
+void slackNotification(color, message, channel) {
      slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: color, message: message
 }

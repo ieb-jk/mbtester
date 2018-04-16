@@ -73,5 +73,5 @@ void setBuildStatus(context, message, state) {
 
 
 void slackNotification(color, message, channel) {
-     slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: color, message: message
+     slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: color, message: message "<${env.BUILD_URL} | [${env.JOB_NAME} build ${env.BUILD_NUMBER} ${message}]>\n"
 }

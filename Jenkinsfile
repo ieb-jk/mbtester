@@ -57,7 +57,7 @@ pipeline {
 void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
 
 void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
-    slackNotification("bad","${context}-failed","@John.Kemp")
+    slackNotification("bad","${context}-failed ${env.BUILD_URL}","@John.Kemp")
 throw err}
 
 
@@ -73,5 +73,5 @@ void setBuildStatus(context, message, state) {
 
 
 void slackNotification(color, message, channel) {
-     slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: color, message: message "<${env.BUILD_URL} | [${env.JOB_NAME} build ${env.BUILD_NUMBER} ${message}]>\n"
+     slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: color, message: message
 }

@@ -21,7 +21,7 @@ pipeline {
         stage('UnitTesting') {
             steps {
                 echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
-                passed('UnitTesting')
+                failed('UnitTesting')
             }
         }
 

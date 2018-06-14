@@ -8,7 +8,7 @@ pipeline {
             steps {
                 echo 'Checkout source and do regular stuff'
                 echo "Working with ${env.BRANCH_NAME}"
-                env
+                echo "We got $(env)"
             }
         }
 

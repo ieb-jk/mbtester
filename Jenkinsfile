@@ -6,14 +6,14 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                echo 'Checkout source and do regualar stuff'
-                echo "We are working with ${env.BRANCH_NAME}"
+                echo 'Checkout source and do regular stuff'
+                echo "Working with ${env.BRANCH_NAME}"
             }
         }
 
         stage('Merging') {
             steps {
-                echo 'Develope branch merges Phinx migration scripts ran and Grunt applied'
+                echo 'Check for merging issues against develop branch'
                 passed('CodeMerges')
             }
         }

@@ -51,7 +51,6 @@ pipeline {
             }
         }
     }
-
 }
 
 
@@ -66,7 +65,7 @@ void failed(context) {
     channel="@John.Kemp" // Eg "#cicd" or "@John.Kemp"
     message="Failed-${context} > ${env.BUILD_URL}"
     slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: "danger", message: message
- }
+}
 
 void setGitStatus(context,message,state) {
     context="ci/jenkins/${context}"

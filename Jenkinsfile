@@ -8,7 +8,7 @@ pipeline {
             steps {
                 //echo 'Checkout source and do regular stuff'
                 echo "We are working with ${env.BRANCH_NAME} and branch ${env.GIT_URL}"
-                slackNotification("danger","Attempt-failed > ${env.BUILD_URL}","@John.Kemp")
+                slackNotification("danger","Unit Testing - failed > ${env.BUILD_URL}","#cicd")
             }
         }
 

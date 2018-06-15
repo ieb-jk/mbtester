@@ -23,7 +23,7 @@ pipeline {
                 echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
                 script {
                     try {
-                        //sh "echo 'Unit tests run and fail';exit 2"
+                        sh "echo 'Unit tests ran and failed';exit 2"
                         passed('UnitTesting')
                     } catch (Exception e) {
                         failed('UnitTesting')

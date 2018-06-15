@@ -7,14 +7,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Checkout source and sync with latest dev'
-                echo "We are working with ${env.BRANCH_NAME} and branch ${env.GIT_URL}"
-            }
-        }
-
-        stage('Merging') {
-            steps {
-                echo 'Check for merging issues against develop branch'
-                passed('CodeMerges')
+                passed("Checkout, merge checks, phinx and grunt"
             }
         }
 

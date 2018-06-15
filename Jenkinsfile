@@ -62,13 +62,6 @@ pipeline {
 }
 
 
-void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
-
-void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
-    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","@John.Kemp")
-}
-
-
 void setBuildStatus(context, message, state) {
   step([
       $class: "GitHubCommitStatusSetter",
@@ -79,6 +72,13 @@ void setBuildStatus(context, message, state) {
   ]);
 }
 
+
+
+void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
+
+void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
+    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","@John.Kemp")
+}
 
 void slackNotification(color, message, channel) {
      slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: color, message: message

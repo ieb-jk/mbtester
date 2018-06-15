@@ -24,11 +24,11 @@ pipeline {
                 script {
                     try {
                         sh "echo 'Unit tests ran and failed';exit 2"
-                        passed('UnitTesting')
                     } catch (Exception e) {
                         failed('UnitTesting')
                         throw err
                     }
+                    passed('UnitTesting')
                 }
             }
         }
@@ -62,26 +62,27 @@ pipeline {
 }
 
 
-void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
 
-void setBuildStatus(context, message, state) {
-  step([
-      $class: "GitHubCommitStatusSetter",
-      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
-      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "${env.GIT_URL}"],
-      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
-  ]);
+
+void passed(context) {
+    setGitStatus(context,"Passed","SUCCESS")
 }
 
-
-
-
-void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
-//    slackNotification("danger","Attempt-failed > ${env.BUILD_URL}","#cicd")
-    slackNotification("danger","Attempt-failed > ${env.BUILD_URL}","@John.Kemp")
-}
-
-void slackNotification(color, message, channel) {
-     slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: color, message: message
+void failed(context) {
+    setGitStatus(context, "Failed!", 'FAILURE') 
+    channel="@John.Kemp" // Eg "#cicd" or "@John.Kemp"
+    message="Failed-${context} > ${env.BUILD_URL}"
+    slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: "danger", message: message
  }
+
+void setGitStatus(context,message,state) {
+    context="ci/jenkins/${context}"
+    step([
+        $class: "GitHubCommitStatusSetter",
+        contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
+        reposSource: [$class: "ManuallyEnteredRepositorySource", url: "${env.GIT_URL}"],
+        errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+        statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+    ]);
+}
+

@@ -8,6 +8,7 @@ pipeline {
             steps {
                 //echo 'Checkout source and do regular stuff'
                 echo "We are working with ${env.BRANCH_NAME} and branch ${env.GIT_URL}"
+                slackNotification("danger","${context}-failed > ${env.BUILD_URL}","@John.Kemp")
             }
         }
 
@@ -57,8 +58,7 @@ pipeline {
 void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
 
 void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
-    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","@John.Kemp")
-//    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","#cicd")
+    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","#cicd")
 throw err}
 
 

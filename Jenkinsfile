@@ -62,6 +62,8 @@ pipeline {
 }
 
 
+void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
+
 void setBuildStatus(context, message, state) {
   step([
       $class: "GitHubCommitStatusSetter",
@@ -74,9 +76,9 @@ void setBuildStatus(context, message, state) {
 
 
 
-void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
 
 void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
+//    slackNotification("danger","Attempt-failed > ${env.BUILD_URL}","#cicd")
     slackNotification("danger","Attempt-failed > ${env.BUILD_URL}","@John.Kemp")
 }
 

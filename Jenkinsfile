@@ -25,7 +25,7 @@ pipeline {
                     try {
                         sh "echo 'Unit tests ran and failed';exit 2"
                     } catch (Exception e) {
-                        failed('UnitTesting')
+                        failed('Unit-Testing')
                         throw err
                     }
                     passed('UnitTesting')

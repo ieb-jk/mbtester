@@ -6,17 +6,17 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                echo 'Checkout source and sync with latest dev'
-                passed("Checkout, merge checks, phinx and grunt"
+                echo 'Checkout source, sync with dev, run phinx and grunt. Check for errors/conflicts"
+                passed("Checkout, merge checks, phinx and grunt")
             }
         }
 
         stage('UnitTesting') {
             steps {
-                echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
+                echo 'PhpUnit code testing with mocked integration'
                 script {
                     try {
-                        sh "echo 'Unit tests ran and failed';exit 2"
+                        sh "echo 'Unit tests ran';exit 0"
                     } catch (Exception e) {
                         failed('UnitTesting')
                         throw err

@@ -23,6 +23,7 @@ pipeline {
                 echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
                 script {
                     try {
+                        passed('UnitTesting')
                         sh "echo 'Unit tests run and fail';exit 2"
                         passed('UnitTesting')
                     } catch (Exception e) {
@@ -77,7 +78,7 @@ void setBuildStatus(context, message, state) {
 void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
 
 void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
-    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","@John.Kemp")
+    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","@JohnKemp")
 }
 
 void slackNotification(color, message, channel) {

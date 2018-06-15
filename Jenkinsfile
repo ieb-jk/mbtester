@@ -7,8 +7,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Checkout source and do regular stuff'
-                echo "Working with ${env.BRANCH_NAME}"
-                echo "We got $(env)"
+                echo "We are working with ${env.BRANCH_NAME} and branch ${env.GIT_URL}"
             }
         }
 

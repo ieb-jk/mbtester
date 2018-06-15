@@ -16,7 +16,7 @@ pipeline {
                 echo 'PhpUnit code testing with mocked integration'
                 script {
                     try {
-                        sh "echo 'Unit tests ran'"
+                        sh "echo 'Unit tests ran';exit 2"
                     } catch (Exception e) {
                         failed('UnitTesting')
                         throw err

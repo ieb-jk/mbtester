@@ -6,9 +6,8 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                //echo 'Checkout source and do regular stuff'
+                echo 'Checkout source and sync with latest dev'
                 echo "We are working with ${env.BRANCH_NAME} and branch ${env.GIT_URL}"
-                slackNotification("danger","Unit Testing - failed > ${env.BUILD_URL}","#cicd")
             }
         }
 
@@ -22,7 +21,15 @@ pipeline {
         stage('UnitTesting') {
             steps {
                 echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
-                passed('UnitTesting')
+                script {
+                    try {
+                        sh "echo 'Unit tests are running'"
+                        passed('UnitTesting')
+                    } catch (Exception e) {
+                        fail('UnitTesting')
+                        throw err
+                    }
+                }
             }
         }
 
@@ -58,8 +65,8 @@ pipeline {
 void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
 
 void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
-    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","#cicd")
-throw err}
+    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","#John.Kemp")
+}
 
 
 void setBuildStatus(context, message, state) {

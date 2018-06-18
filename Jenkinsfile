@@ -17,19 +17,14 @@ node {
 
 
     stage('ParallelTesting') {
-
-        parallel(
-            stage('StaticAnalysis') {
-                echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX'
-                passed('StaticAnalysis') 
-            },
-            stage('Integration') {
-                echo 'BrowserStack with end to end testing'
-                passed('IntegrationTesting')
-            }
+        parallel (
+            'StaticAnalysis' : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' },
+            'Integration' : { echo 'BrowserStack with end to end testing'},
+            'LoadTesting' : { echo 'JMeter, Bench, Seige'},
+            'Security' : { echo 'RIPs security scanning'}
         )
-
     }
+
 }
 
 

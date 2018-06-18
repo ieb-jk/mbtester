@@ -1,51 +1,85 @@
-node {
+pipeline {
 
-    stage('Checkout') {
-        echo 'Checkout source and do regualar stuff'
-        echo "We are working with ${env.BRANCH_NAME}"
-        sh "env"
-    }
+    agent any
 
-    stage('Merging') {
-        echo 'Develope branch merges Phinx migration scripts ran and Grunt applied'
-        passed('CodeMerges')
-    }
+    stages {
 
-    stage('UnitTesting') {
-        echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
-        passed('UnitTesting')
-    }
+        stage('Checkout') {
+            steps {
+                echo 'Checkout source and sync with latest dev'
+                echo "We are working with ${env.BRANCH_NAME} and branch ${env.GIT_URL}"
+            }
+        }
 
-    stage('ParallelTesting') {
-        parallel {
-            stage("StaticAnalysis") { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX'
-                passed('StaticAnalysis') }
-            stage("Integration") { echo 'BrowserStack with end to end testing'
-                passed('IntegrationTesting') }
+        stage('Merging') {
+            steps {
+                echo 'Check for merging issues against develop branch'
+                passed('CodeMerges')
+            }
+        }
+
+        stage('UnitTesting') {
+            steps {
+                echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
+                script {
+                    try {
+                        sh "echo 'Unit tests are running'"
+                        passed('UnitTesting')
+                    } catch (Exception e) {
+                        fail('UnitTesting')
+                        throw err
+                    }
+                }
+            }
+        }
+
+        stage('ParallelTesting') {
+            steps {
+                parallel (
+                    "StaticAnalysis" : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' 
+                        passed('StaticAnalysis') },
+                    "Integration" : { echo 'BrowserStack with end to end testing'
+                        passed('IntegrationTesting') },
+                    "LoadTesting" : { echo 'JMeter, Bench, Seige'
+                        passed('LoadTesting') },
+                    "Security" : { echo 'RIPs security scanning' 
+                        passed('SecurityScan') }
+                )
+            }
+        }
+
+        stage('ReleaseToDark') {
+            when {
+                branch "PR-..*"
+            }
+            steps {
+                passed('Deployment')
+                echo "Deploy to 'dark' environment"
+            }
         }
     }
+
 }
 
 
+void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
 
-void passed(context) {
-    setGitStatus(context,"Passed!","SUCCESS")
+void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
+    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","#John.Kemp")
 }
 
-void failed(context) {
-    setGitStatus(context, "Failed!", 'FAILURE') 
-    channel="@John.Kemp" // Eg "#cicd" or "@John.Kemp"
-    message="Failed-${context} > ${env.BUILD_URL}"
-    slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: "danger", message: message
+
+void setBuildStatus(context, message, state) {
+  step([
+      $class: "GitHubCommitStatusSetter",
+      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "${env.GIT_URL}"],
+      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ]);
 }
 
-void setGitStatus(context,message,state) {
-    context="ci/jenkins/${context}"
-    step([
-        $class: "GitHubCommitStatusSetter",
-        contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
-        reposSource: [$class: "ManuallyEnteredRepositorySource", url: "${env.GIT_URL}"],
-        errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-        statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
-    ]);
+
+void slackNotification(color, message, channel) {
+     slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: color, message: message
 }

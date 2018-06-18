@@ -1,77 +1,53 @@
-pipeline {
+node {
 
-    agent any
+    stage('Checkout') {
+        echo "Checkout ${env.BRANCH_NAME}, scan for conflicts, test migrations and run grunt"
+        sh "env"
+    }
 
-    stages {
+    stage('Merging') {
+        echo 'Develope branch merges Phinx migration scripts ran and Grunt applied'
+        passed('CodeMerges')
+    }
 
-        stage('Checkout') {
-            steps {
-                echo 'Checkout source and do regualar stuff'
-                echo "We are working with ${env.BRANCH_NAME}"
-            }
-        }
+    stage('UnitTesting') {
+        echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
+        passed('UnitTesting')
+    }
 
-        stage('Merging') {
-            steps {
-                echo 'Develope branch merges Phinx migration scripts ran and Grunt applied'
-                passed('CodeMerges')
-            }
-        }
 
-        stage('UnitTesting') {
-            steps {
-                echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
-                passed('UnitTesting')
-            }
-        }
-
-        stage('ParallelTesting') {
-            steps {
-                parallel (
-                    "StaticAnalysis" : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' 
-                        passed('StaticAnalysis') },
-                    "Integration" : { echo 'BrowserStack with end to end testing'
-                        passed('IntegrationTesting') },
-                    "LoadTesting" : { echo 'JMeter, Bench, Seige'
-                        passed('LoadTesting') },
-                    "Security" : { echo 'RIPs security scanning' 
-                        passed('SecurityScan') }
-                )
-            }
-        }
-
-        stage('ReleaseToDark') {
-            when {
-                branch "PR-..*"
-            }
-            steps {
-                passed('Deployment')
-                echo "Deploy to 'dark' environment"
-            }
-        }
+    stage('ParallelTesting') {
+        parallel (
+            'StaticAnalysis' : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' },
+            'Integration' : { echo 'BrowserStack with end to end testing'},
+            'LoadTesting' : { echo 'JMeter, Bench, Seige'},
+            'Security' : { echo 'RIPs security scanning'}
+        )
+        passed('IntegrationTesting')
     }
 
 }
 
 
-void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
 
-void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
-    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","#cicd")
-throw err}
-
-
-void setBuildStatus(context, message, state) {
-  step([
-      $class: "GitHubCommitStatusSetter",
-      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
-      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/ieb-jk/mbtester"],
-      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
-  ]);
+void passed(context) {
+    setGitStatus(context,"Passed!","SUCCESS")
 }
 
+void failed(context) {
+    setGitStatus(context, "Failed!", 'FAILURE') 
+    channel="@John.Kemp" // Eg "#cicd" or "@John.Kemp"
+    message="Failed-${context} > ${env.BUILD_URL}"
+    slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: "danger", message: message
+}
 
-void slackNotification(color, message, channel) {
-     slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: color, message: message
+void setGitStatus(context,message,state) {
+    context="ci/jenkins/${context}"
+    step([
+        $class: "GitHubCommitStatusSetter",
+        contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
+        reposSource: [$class: "ManuallyEnteredRepositorySource", url: "${env.GIT_URL}"],
+        errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+        statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+    ]);
 }

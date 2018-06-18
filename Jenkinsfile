@@ -15,14 +15,15 @@ node {
         passed('UnitTesting')
     }
 
+
     stage('ParallelTesting') {
 
         parallel(
-            stage("StaticAnalysis") {
+            stage('StaticAnalysis') {
                 echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX'
                 passed('StaticAnalysis') 
             },
-            stage("Integration") {
+            stage('Integration') {
                 echo 'BrowserStack with end to end testing'
                 passed('IntegrationTesting')
             }

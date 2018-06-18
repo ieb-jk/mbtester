@@ -23,14 +23,7 @@ node {
             stage("Integration") { echo 'BrowserStack with end to end testing'
                 passed('IntegrationTesting') }
         }
-
-
-//            "LoadTesting" : { echo 'JMeter, Bench, Seige'
- //               passed('LoadTesting') },
-  //          "Security" : { echo 'RIPs security scanning' 
-   //             passed('SecurityScan') }
- //       )
-//    }
+    }
 }
 
 

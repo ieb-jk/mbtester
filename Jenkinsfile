@@ -1,63 +1,39 @@
-pipeline {
+node {
 
-    agent any
+    stage('Checkout') {
+        echo 'Checkout source and do regualar stuff'
+        echo "We are working with ${env.BRANCH_NAME}"
+        sh "env"
+    }
 
-    stages {
+    stage('Merging') {
+        echo 'Develope branch merges Phinx migration scripts ran and Grunt applied'
+        passed('CodeMerges')
+    }
 
-        stage('Checkout') {
-            steps {
-                echo 'Checkout source, sync with dev, run phinx and grunt. Check for errors/conflicts'
-                passed("Checkout, merge checks, phinx and grunt")
-            }
-        }
+    stage('UnitTesting') {
+        echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
+        passed('UnitTesting')
+    }
 
-        stage('UnitTesting') {
-            steps {
-                echo 'PhpUnit code testing with mocked integration'
-                script {
-                    try {
-                        sh "echo 'Unit tests ran';exit 2"
-                    } catch (Exception e) {
-                        failed('UnitTesting')
-                        throw err
-                    }
-                    passed('UnitTesting')
-                }
-            }
-        }
-
-        stage('ParallelTesting') {
-            steps {
-                parallel (
-                    "StaticAnalysis" : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' 
-                        passed('StaticAnalysis') },
-                    "Integration" : { echo 'BrowserStack with end to end testing'
-                        passed('IntegrationTesting') },
-                    "LoadTesting" : { echo 'JMeter, Bench, Seige'
-                        passed('LoadTesting') },
-                    "Security" : { echo 'RIPs security scanning' 
-                        passed('SecurityScan') }
-                )
-            }
-        }
-
-        stage('ReleaseToDark') {
-            when {
-                branch "PR-..*"
-            }
-            steps {
-                passed('Deployment')
-                echo "Deploy to 'dark' environment"
-            }
-        }
+    stage('ParallelTesting') {
+        parallel (
+            "StaticAnalysis" : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' 
+                passed('StaticAnalysis') },
+            "Integration" : { echo 'BrowserStack with end to end testing'
+                passed('IntegrationTesting') },
+            "LoadTesting" : { echo 'JMeter, Bench, Seige'
+                passed('LoadTesting') },
+            "Security" : { echo 'RIPs security scanning' 
+                passed('SecurityScan') }
+        )
     }
 }
 
 
 
-
 void passed(context) {
-    setGitStatus(context,"Passed","SUCCESS")
+    setGitStatus(context,"Passed!","SUCCESS")
 }
 
 void failed(context) {
@@ -77,4 +53,3 @@ void setGitStatus(context,message,state) {
         statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
     ]);
 }
-

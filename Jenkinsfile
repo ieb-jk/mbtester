@@ -1,8 +1,7 @@
 node {
 
     stage('Checkout') {
-        echo 'Checkout source and do regualar stuff'
-        echo "We are working with ${env.BRANCH_NAME}"
+        echo "Checkout ${env.BRANCH_NAME}, scan for conflicts, test migrations and run grunt"
         sh "env"
     }
 

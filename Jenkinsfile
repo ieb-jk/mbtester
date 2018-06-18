@@ -23,6 +23,7 @@ node {
             'LoadTesting' : { echo 'JMeter, Bench, Seige'},
             'Security' : { echo 'RIPs security scanning'}
         )
+        passed('IntegrationTesting')
     }
 
 }

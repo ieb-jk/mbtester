@@ -19,7 +19,7 @@ node {
     stage('ParallelTesting') {
         parallel (
             'StaticAnalysis' : { echo 'SonarPHP - Codesniffer, LinesOfCode, MessDetector, CopyPaste Detector, CodeBrowser, DOX' },
-            'Integration' : { echo 'BrowserStack with end to end full system penetration testing'},
+            'Integration' : { echo 'BrowserStack /Selenium with end to end full system penetration testing'},
             'LoadTesting' : { echo 'JMeter, Bench, Seige'},
             'Security' : { echo 'RIPs security scanning'}
         )

@@ -2,7 +2,6 @@ pipeline {
 
     environment {
         SLACK = credentials("Slack")    
-        BO_URL="${env.RUN_DISPLAY_URL}".replaceFirst("/job/","/blue/organizations/jenkins/").replaceFirst("/job/","/detail/").replaceFirst("/display/redirect","/pipeline")
     }
     
     agent any
@@ -11,23 +10,15 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                echo 'Checkout source, report conflicts or issues with migrations and grunt'
+                echo 'Checkout source, report conflicts and issues with migrations or grunt'
                 passed('BasicChecks')
             }
         }
 
         stage('UnitTesting') {
             steps {
-                echo 'PhpUnit - contained code testing upto mock / stubbed php scripts'
-                script {
-                    try {
-                        sh "echo 'Unit tests are running'"
-                        passed('UnitTesting')
-                    } catch (Exception e) {
-                        fail('UnitTesting')
-                        throw err
-                    }
-                }
+                echo 'PhpUnit - component testing with mock api stubs'
+                sh "echo 'Unit tests are running'"
             }
         }
 

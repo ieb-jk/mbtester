@@ -1,20 +1,18 @@
 pipeline {
 
+    environment {
+        SLACK = credentials("Slack")    
+        BO_URL="${env.RUN_DISPLAY_URL}".replaceFirst("/job/","/blue/organizations/jenkins/").replaceFirst("/job/","/detail/").replaceFirst("/display/redirect","/pipeline")
+    }
+    
     agent any
 
     stages {
 
         stage('Checkout') {
             steps {
-                echo 'Checkout source and sync with latest dev'
-                echo "We are working with ${env.BRANCH_NAME} and branch ${env.GIT_URL}"
-            }
-        }
-
-        stage('Merging') {
-            steps {
-                echo 'Check for merging issues against develop branch'
-                passed('CodeMerges')
+                echo 'Checkout source, report conflicts or issues with migrations and grunt'
+                passed('BasicChecks')
             }
         }
 
@@ -65,7 +63,7 @@ pipeline {
 void passed(context) { setBuildStatus ("ci/jenkins/${context}", "Passed!", 'SUCCESS') }
 
 void failed(context) { setBuildStatus ("ci/jenkins/${context}", "Failed - see details", 'FAILURE') 
-    slackNotification("danger","${context}-failed > ${env.BUILD_URL}","#John.Kemp")
+    slackNotification("danger","${context}-failed > ${env.BO_URL}","#John.Kemp")
 }
 
 
@@ -81,5 +79,5 @@ void setBuildStatus(context, message, state) {
 
 
 void slackNotification(color, message, channel) {
-     slackSend channel: channel, teamDomain: 'allbeauty', token: 'cOBOpfMoUQQpqxwkOXyy3vC8', color: color, message: message
+     slackSend channel: channel, teamDomain: 'allbeauty', token: "${env.SLACK}", color: color, message: message
 }

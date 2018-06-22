@@ -13,7 +13,7 @@ pipeline {
         stage('UnitTesting') {
             steps {
                 echo 'PhpUnit - component testing with mock api stubs'
-                sh "echo 'Unit tests are running success'"
+                sh "echo 'Unit tests are running sUccess';exit 2"
             }
         }
 

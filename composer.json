@@ -1,0 +1,31 @@
+{
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/PHPOffice/PhpSpreadsheet"
+        }
+    ],
+    "require": {
+        "psr/log": "^1.0",
+        "ircmaxell/random-lib": "^1.1",
+        "ircmaxell/password-compat": "^1.0",
+        "tecnickcom/tc-lib-barcode": "~1.6",
+        "pimple/pimple": "~3.0",
+        "algolia/algoliasearch-client-php": "^1.18",
+        "geoip2/geoip2": "~2.0",
+        "maxmind-db/reader": "~1.0",
+        "predis/predis": "^1.1",
+        "html2text/html2text": "~4",
+        "phpmailer/phpmailer": "~5.2",
+        "PHPOffice/PhpSpreadsheet": "dev-master",
+        "robmorgan/phinx": "^0.7.1"
+    },
+    "require-dev": {
+        "phpmd/phpmd": "^2.4",
+        "phpunit/phpunit": "^4.8",
+        "pdepend/pdepend": "^2.2",
+        "squizlabs/php_codesniffer": "^2.6"
+    },
+     "license": "proprietary"
+}
